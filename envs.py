@@ -525,3 +525,71 @@ class TwoAgentMatrixGameEnv(MultiAgentEnv):
         
         return obs
         
+
+class TwoAgentSeparateMatrixGameEnv(MultiAgentEnv):
+    
+    def __init__(self, RPST=(3,1,0,5), history_n=100, player2_0=players.TitForTatPlayer(), player2_1=players.TitForTatPlayer()):
+        
+        self.num_agents = 2
+        
+        self.RPST = RPST
+        self.history_n = history_n
+        # self.history = np.zeros((2,2,self.history_n))
+        
+        # self._counter = 0
+        self._setup_spaces()
+        self.single_player_envs = {0: MatrixGameEnv(history_n=self.history_n, player2=player2_0),
+                                   1: MatrixGameEnv(history_n=self.history_n, player2=player2_1)}
+
+    
+    def _setup_spaces(self):
+        
+        self.action_space = spaces.Discrete(2)
+        
+        self.observation_space = spaces.Box(0, 1,
+                                           shape=(self.history_n * 4,))
+
+    
+    def update_history(self, action_dict):
+        
+#         if self._counter < self.history_n:
+#             self.history[0, action, self._counter] = 1
+#             self.history[1, action2, self._counter] = 1
+#         else:
+        self.history[:,:,1:] = self.history[:,:,:-1]
+        self.history[:,:,0] = 0
+        self.history[0, action_dict[0], 0] = 1
+        self.history[1, action_dict[1], 0] = 1
+
+    def step(self, action_dict):
+
+        obs = {}
+        rew = {}
+        done = {}
+        info = {}
+
+        done["__all__"] = False
+
+        for i in [0, 1]:
+            obs_i, rew_i, done_i, info_i = self.single_player_envs[i].step(action_dict[i])
+            obs[i] = obs_i
+            rew[i] = rew_i
+            done[i] = done_i
+            info[i] = {}
+
+            if done_i == True:
+                done["__all__"] = True
+        
+        return obs, rew, done, info
+        
+        
+        
+    def reset(self):
+
+        obs = {}
+
+        for i in [0, 1]:
+            obs[i] = self.single_player_envs[i].reset()
+
+        return obs
+        
