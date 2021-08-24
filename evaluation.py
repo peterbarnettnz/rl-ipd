@@ -45,14 +45,14 @@ def generate_history_no_history():
         
     return history
 
-def is_t4t(agent, n_samples):
+def is_t4t(agent, n_samples, policy_id='default_policy'):
     
     agent_actions = []
     t4t_actions = []
     
     for i in range(n_samples):
         history, n_turn = generate_history()
-        action = agent.compute_action(history.flatten())
+        action = agent.compute_action(history.flatten(), policy_id=policy_id)
         if n_turn == 0:
             opponents_last_action = 0
         else:
@@ -67,7 +67,7 @@ def is_t4t(agent, n_samples):
     defect_fraction = np.sum([int(agent_action) for agent_action in agent_actions])/n_samples
     coop_fraction = 1 - defect_fraction
     
-    return t4t_fraction, coop_fraction
+    return t4t_fraction[0], coop_fraction
 
 def is_t4t_no_history(agent, n_samples):
     
