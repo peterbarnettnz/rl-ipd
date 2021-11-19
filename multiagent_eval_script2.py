@@ -53,8 +53,8 @@ register_env('MG_t4t_env', lambda c: envs.MatrixGameEnv())
 
 
 base_dir = '/home/peter/Documents/ML/rl_ipd/MA_runs/big1/MA/'
-exp_dirs = ['MA_PPO1/']
-env_pref = 'PPO'
+exp_dirs = ['MA_DQN1/']
+env_pref = 'DQN'
 
 # exp_dir = 'DQN_single_t4td/'
 # env_pref = 'DQN_MG_t4td_env'
@@ -63,8 +63,8 @@ cp_path = "/checkpoint_000200/checkpoint-200"
 # exps = os.listdir(base_dir+exp_dir)
 
 # base_dir = '/home/peter/Documents/ML/rl_ipd/MA_runs/small1/MA/'
-# exp_dirs = ['MA_PPO2/']
-# env_pref = 'PPO'
+# exp_dirs = ['MA_DQN2/']
+# env_pref = 'DQN'
 
 # # exp_dir = 'DQN_single_t4td/'
 # # env_pref = 'DQN_MG_t4td_env'
@@ -72,53 +72,14 @@ cp_path = "/checkpoint_000200/checkpoint-200"
 # cp_path = "/checkpoint_000100/checkpoint-100"
 # # exps = os.listdir(base_dir+exp_dir)
 
-base_dir = '/home/peter/Documents/ML/rl_ipd/more_runs/'
-exp_dirs = ['MA_random_length_PPO2/', 'MA_random_length_nodoneatend_PPO2/']
-exp_dirs = ['MA_random_length_PPO2/']
-env_pref = 'PPO'
+base_dir = '/home/peter/Documents/ML/rl_ipd/MA_no_done_at_end1/'
+exp_dirs = ['MA_DQN_no_done_at_end1/']
+env_pref = 'DQN'
+
+# exp_dir = 'DQN_single_t4td/'
+# env_pref = 'DQN_MG_t4td_env'
+
 cp_path = "/checkpoint_000100/checkpoint-100"
-state_len=None
-
-
-# base_dir = '/home/peter/Documents/ML/rl_ipd/more_runs/MA_lstm/'
-# exp_dirs = ['MA_PPO2/']
-# # exp_dirs = ['MA_random_length_nodoneatend_PPO2/']
-
-# env_pref = 'PPO'
-# cp_path = "/checkpoint_000100/checkpoint-100"
-# state_len=1
-
-# base_dir = '/home/peter/Documents/ML/rl_ipd/more_runs/MA_statelen/'
-# exp_dirs = ['MA_random_length_nodoneatend_PPO1_statelen1/','MA_random_length_nodoneatend_PPO2_statelen1/',
-#             # 'MA_random_length_nodoneatend_PPO1_statelen5/','MA_random_length_nodoneatend_PPO2_statelen5/',
-#             'MA_random_length_PPO1_statelen1/', 'MA_random_length_PPO2_statelen1/',
-#             # 'MA_random_length_PPO1_statelen5/', 'MA_random_length_PPO2_statelen5/'
-#             ]
-# state_len=1
-
-# exp_dirs = ['MA_random_length_nodoneatend_PPO1_statelen5/','MA_random_length_nodoneatend_PPO2_statelen5/',
-#             'MA_random_length_PPO1_statelen5/', 'MA_random_length_PPO2_statelen5/']
-# state_len=5
-
-# exp_dirs = ['MA_random_length_nodoneatend_PPO2/']
-
-# env_pref = 'PPO'
-# cp_path = "/checkpoint_000100/checkpoint-100"
-
-
-
-# base_dir = '/home/peter/Documents/ML/rl_ipd/more_runs/MA_ppo_rerun_rl/'
-base_dir = '/home/peter/Documents/ML/rl_ipd/more_runs/MA_ppo_rerun/'
-
-# exp_dirs = ['MA_PPO2_same/', 'MA_PPO2_diff/']
-# state_len=1
-
-exp_dirs = ['MA_PPO2_diff_sl5_2/']
-state_len=5
-
-# cp_path = "/checkpoint_000100/checkpoint-100"
-
-cp_path = "/checkpoint_001000/checkpoint-1000"
 
 for exp_dir in exp_dirs:
     exps = os.listdir(base_dir+exp_dir)
@@ -170,20 +131,14 @@ for exp_dir in exp_dirs:
 #                     try:
                     with open(path1 + '/params.pkl', 'rb') as f:
                         data = pickle.load(f)
-
-                    # print(data)
-                    # assert False
-
-                    agent = PPOTrainer(config=data)
+                    agent = DQNTrainer(config=data)
                     agent.restore(path1+ cp_path, )
-                    # t_frac, c_frac = evaluation.is_t4t_no_history_old(agent,100, policy_id='agent-0')
-                    t_frac, c_frac = evaluation.is_t4t(agent,100, policy_id='agent-0', n_history=100, state_len=state_len)
+                    t_frac, c_frac = evaluation.is_t4t(agent,100, policy_id='agent-0')
 
                     append_dict['t4t_frac0'] = t_frac
                     append_dict['coop_frac0'] = c_frac
 
-                    t_frac, c_frac = evaluation.is_t4t(agent,100, policy_id='agent-1', n_history=100, state_len=state_len)
-                    # t_frac, c_frac = evaluation.is_t4t_no_history_old(agent,100, policy_id='agent-1')
+                    t_frac, c_frac = evaluation.is_t4t(agent,100, policy_id='agent-1')
 
                     append_dict['t4t_frac1'] = t_frac
                     append_dict['coop_frac1'] = c_frac

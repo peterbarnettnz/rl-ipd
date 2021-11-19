@@ -72,6 +72,32 @@ cp_path = "/checkpoint_000200/checkpoint-200"
 # cp_path = "/checkpoint_000100/checkpoint-100"
 # # exps = os.listdir(base_dir+exp_dir)
 
+base_dir = '/home/peter/Documents/ML/rl_ipd/more_runs/'
+exp_dirs = ['MA_random_length_DQN2/', 'MA_random_length_nodoneatend_DQN2/', 'MA_random_length_nodoneatend_DQN2_2/']
+env_pref = 'DQN'
+cp_path = "/checkpoint_000100/checkpoint-100"
+state_len=None
+
+# base_dir = '/home/peter/Documents/ML/rl_ipd/more_runs/'
+# exp_dirs = ['MA_random_length_DQN3/']
+# env_pref = 'DQN'
+# cp_path = "/checkpoint_000400/checkpoint-400"
+
+
+
+# base_dir = '/home/peter/Documents/ML/rl_ipd/more_runs/MA_statelen/'
+# exp_dirs = ['MA_random_length_nodoneatend_DQN1_statelen1/','MA_random_length_nodoneatend_DQN2_statelen1/',
+#             'MA_random_length_DQN1_statelen1/', 'MA_random_length_DQN2_statelen1/',
+#             ]
+# state_len=1
+
+# exp_dirs = ['MA_random_length_nodoneatend_DQN1_statelen5/','MA_random_length_nodoneatend_DQN2_statelen5/',
+#             'MA_random_length_DQN1_statelen5/', 'MA_random_length_DQN2_statelen5/']
+# state_len=5
+
+env_pref = 'DQN'
+cp_path = "/checkpoint_000100/checkpoint-100"
+
 for exp_dir in exp_dirs:
     exps = os.listdir(base_dir+exp_dir)
     attributes = ['gamma', 'lr']
@@ -122,14 +148,16 @@ for exp_dir in exp_dirs:
 #                     try:
                     with open(path1 + '/params.pkl', 'rb') as f:
                         data = pickle.load(f)
+                    # print(data)
+                    # assert False
                     agent = DQNTrainer(config=data)
                     agent.restore(path1+ cp_path, )
-                    t_frac, c_frac = evaluation.is_t4t(agent,100, policy_id='agent-0')
+                    t_frac, c_frac = evaluation.is_t4t(agent,100, policy_id='agent-0', state_len=state_len)
 
                     append_dict['t4t_frac0'] = t_frac
                     append_dict['coop_frac0'] = c_frac
 
-                    t_frac, c_frac = evaluation.is_t4t(agent,100, policy_id='agent-1')
+                    t_frac, c_frac = evaluation.is_t4t(agent,100, policy_id='agent-1', state_len=state_len)
 
                     append_dict['t4t_frac1'] = t_frac
                     append_dict['coop_frac1'] = c_frac

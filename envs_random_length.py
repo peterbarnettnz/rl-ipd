@@ -42,6 +42,8 @@ class MatrixGameStackEnv(gym.Env):
         self._setup_spaces()
         self.player2 = player2
         self.game = MatrixGame(RPST=(3,1,0,5))
+
+        self.final_turn = np.random.randint(self.history_n)
         
         
         
@@ -75,7 +77,7 @@ class MatrixGameStackEnv(gym.Env):
         self.state = self.history_to_state(self.history)
         
         self._counter += 1
-        done = self._counter >= self.history_n 
+        done = self._counter > self.final_turn 
         
         return self.state, rewards[0], done, {}
 
@@ -85,6 +87,7 @@ class MatrixGameStackEnv(gym.Env):
 
         self.history = np.zeros((2,2,self.history_n))
         self.state = self.history.flatten()
+        self.final_turn = np.random.randint(self.history_n)
 
         self._counter = 0
         self.player2.reset()
@@ -105,7 +108,8 @@ class MatrixGameRollingHistoryEnv(gym.Env):
         self.player2 = player2
         self.game = MatrixGame(RPST=RPST)
         
-        
+        self.final_turn = np.random.randint(self.game_length)
+
         
     def _setup_spaces(self):
         
@@ -151,7 +155,7 @@ class MatrixGameRollingHistoryEnv(gym.Env):
         self.state = self.history_to_state(self.history)
         self._counter += 1
         
-        done = self._counter >= self.game_length
+        done = self._counter > self.final_turn
 
         return self.state, rewards[0], done, {}
 
@@ -163,6 +167,8 @@ class MatrixGameRollingHistoryEnv(gym.Env):
         self.state = self.history.flatten()
 
         self._counter = 0
+        self.final_turn = np.random.randint(self.game_length)
+
         self.player2.reset()
         
         return self.state
@@ -179,7 +185,8 @@ class MatrixGameEnv(gym.Env):
         self._setup_spaces()
         self.player2 = player2
         self.game = MatrixGame(RPST=RPST)
-        
+        self.final_turn = np.random.randint(self.history_n)
+
         
     def _setup_spaces(self):
         
@@ -222,7 +229,7 @@ class MatrixGameEnv(gym.Env):
         self.state = self.history_to_state(self.history)
         self._counter += 1
         
-        done = self._counter >= self.history_n
+        done = self._counter > self.final_turn
 
         return self.state, rewards[0], done, {}
 
@@ -235,7 +242,8 @@ class MatrixGameEnv(gym.Env):
 
         self._counter = 0
         self.player2.reset()
-        
+        self.final_turn = np.random.randint(self.history_n)
+
         return self.state
 
 
@@ -250,7 +258,8 @@ class MatrixGameEnv_2player(gym.Env):
         self._setup_spaces()
         self.game = MatrixGame(RPST=RPST)
         
-        
+        self.final_turn = np.random.randint(self.history_n)
+
         
     def _setup_spaces(self):
         
@@ -294,7 +303,7 @@ class MatrixGameEnv_2player(gym.Env):
         self.state = self.history_to_state(self.history)
         self._counter += 1
         
-        done = self._counter >= self.history_n
+        done = self._counter > self.final_turn
 
         return self.state, rewards[0], done, {}
 
@@ -304,7 +313,8 @@ class MatrixGameEnv_2player(gym.Env):
         self.state = self.history.flatten()
 
         self._counter = 0
-        
+        self.final_turn = np.random.randint(self.history_n)
+
         return self.state
 
         
@@ -320,7 +330,8 @@ class MatrixGameRollingHistoryEnv_2player(gym.Env):
         self._counter = 0
         self._setup_spaces()
         self.game = MatrixGame(RPST=RPST)
-        
+        self.final_turn = np.random.randint(self.game_length)
+
         
         
     def _setup_spaces(self):
@@ -365,7 +376,7 @@ class MatrixGameRollingHistoryEnv_2player(gym.Env):
         self.state = self.history_to_state(self.history)
         self._counter += 1
         
-        done = self._counter >= self.game_length
+        done = self._counter > self.final_turn
 
         return self.state, rewards[0], done, {}
 
@@ -375,6 +386,7 @@ class MatrixGameRollingHistoryEnv_2player(gym.Env):
 
         self.history = np.zeros((2,2,self.history_n))
         self.state = self.history.flatten()
+        self.final_turn = np.random.randint(self.game_length)
 
         self._counter = 0
         
@@ -397,7 +409,8 @@ class MatrixGameEnv_no_history(gym.Env):
         self.player2 = player2
         self.n_games = n_games
         self.game = MatrixGame(RPST=(3,1,0,5))
-        
+        self.final_turn = np.random.randint(self.n_games)
+
         
         
     def _setup_spaces(self):
@@ -432,7 +445,7 @@ class MatrixGameEnv_no_history(gym.Env):
         self.state = self.lastmoves_to_state(self.last_moves)
         
         self._counter += 1
-        done = self._counter >= self.n_games
+        done = self._counter > self.final_turn
         
         return self.state, rewards[0], done, {}
 
@@ -444,6 +457,8 @@ class MatrixGameEnv_no_history(gym.Env):
         self.state = self.last_moves.flatten()
 
         self._counter = 0
+        self.final_turn = np.random.randint(self.n_games)
+
         self.player2.reset()
         
         return self.state
@@ -455,13 +470,13 @@ class TwoAgentMatrixGameEnv(MultiAgentEnv):
     def __init__(self, RPST=(3,1,0,5), history_n=100, state_len=None):
         
         self.num_agents = 2
-        
+
         if state_len is None:
            self.state_len = history_n
         
         else:
             self.state_len = state_len
-
+        
         self.RPST = RPST
         self.history_n = history_n
         self.history = np.zeros((2,2,self.history_n))
@@ -469,7 +484,8 @@ class TwoAgentMatrixGameEnv(MultiAgentEnv):
         self._counter = 0
         self._setup_spaces()
         self.game = MatrixGame(RPST=self.RPST)
-    
+        self.final_turn = np.random.randint(self.history_n)
+
     
     def _setup_spaces(self):
         
@@ -513,7 +529,7 @@ class TwoAgentMatrixGameEnv(MultiAgentEnv):
         
         self._counter += 1
         
-        is_done = self._counter >= self.history_n
+        is_done = self._counter > self.final_turn
         done = {i: is_done for i in [0, 1, "__all__"]}
         
         info = {0:{}, 1:{}}
@@ -526,6 +542,7 @@ class TwoAgentMatrixGameEnv(MultiAgentEnv):
         
         self.history = np.zeros((2,2,self.history_n))
         obs = self.history_to_states(self.history)
+        self.final_turn = np.random.randint(self.history_n)
 
         self._counter = 0
         
@@ -669,6 +686,7 @@ class TwoAgentSeparateMatrixGame_t4tdEnv(MultiAgentEnv):
         return obs
         
 
+
 class TwoAgentMatrixGameNoHistoryEnv(MultiAgentEnv):
     
     def __init__(self, RPST=(3,1,0,5), n_games=100):
@@ -682,6 +700,7 @@ class TwoAgentMatrixGameNoHistoryEnv(MultiAgentEnv):
         self._counter = 0
         self._setup_spaces()
         self.game = MatrixGame(RPST=self.RPST)
+        self.final_turn = np.random.randint(self.n_games)
     
     
     def _setup_spaces(self):
@@ -717,7 +736,7 @@ class TwoAgentMatrixGameNoHistoryEnv(MultiAgentEnv):
         
         self._counter += 1
         
-        is_done = self._counter >= self.n_games
+        is_done = self._counter > self.final_turn
         done = {i: is_done for i in [0, 1, "__all__"]}
         
         info = {0:{}, 1:{}}
@@ -732,7 +751,8 @@ class TwoAgentMatrixGameNoHistoryEnv(MultiAgentEnv):
 
         obs = self.lastmoves_to_state(self.last_moves)
         self._counter = 0
-        
+        self.final_turn = np.random.randint(self.n_games)
+
         return obs
 
         
